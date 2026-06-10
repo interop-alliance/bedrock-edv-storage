@@ -40,6 +40,11 @@ const sequence = {
   maximum: Number.MAX_SAFE_INTEGER - 1
 };
 
+/**
+ * The stored HMAC reference `{id, type}`, used by the `hmac` fields of
+ * @interop/data-integrity-core IEDVConfig and IIndexEntry (distinct from the
+ * runtime IHMAC contract in that package's Cipher module).
+ */
 const hmac = {
   title: 'hmac',
   type: 'object',
@@ -53,6 +58,9 @@ const hmac = {
   }
 };
 
+/**
+ * Corresponds to @interop/data-integrity-core IEDVConfig interface.
+ */
 const edvConfig = {
   title: 'EDV Configuration',
   type: 'object',
@@ -74,12 +82,15 @@ const edvConfig = {
     },
     ipAllowList,
     hmac,
-    meterId,
+    meterId, // server-side only
     referenceId,
     sequence
   }
 };
 
+/**
+ * Corresponds to @interop/data-integrity-core IJWE interface.
+ */
 const jwe = {
   title: 'JWE with at least one recipient',
   type: 'object',
@@ -136,6 +147,10 @@ const jwe = {
   }
 };
 
+/**
+ * Corresponds to @interop/data-integrity-core IIndexEntry interface (the
+ * `attributes` items correspond to IIndexAttribute).
+ */
 const indexedEntry = {
   title: 'EDV Indexed Entry',
   type: 'object',
@@ -166,6 +181,10 @@ const indexedEntry = {
   }
 };
 
+/**
+ * Corresponds to @interop/data-integrity-core IEncryptedDocument interface (the
+ * encrypted, server-stored form -- not the decrypted IEDVDocument).
+ */
 const edvDocument = {
   title: 'EDV Document',
   type: 'object',
@@ -179,6 +198,12 @@ const edvDocument = {
       items: [indexedEntry]
     },
     jwe,
+    // Note: `pending` is intentionally absent here. The client (edv-client
+    // `_encrypt`) rewrites the cleartext `stream` to `{sequence, chunks}`
+    // before sending, so the server envelope never carries `pending` -- it is
+    // set only inside the encrypted JWE payload and on the client's local copy.
+    // On the first write of a streamed doc this yields `stream: {}`, which is
+    // valid here. See @interop/data-integrity-core IEDVDocumentStream.
     stream: {
       type: 'object',
       additionalProperties: false,
@@ -196,6 +221,9 @@ const edvDocument = {
   }
 };
 
+/**
+ * Corresponds to @interop/data-integrity-core IEDVChunk interface.
+ */
 const edvDocumentChunk = {
   title: 'EDV Document Chunk',
   type: 'object',
@@ -215,6 +243,9 @@ const edvDocumentChunk = {
   }
 };
 
+/**
+ * Corresponds to @interop/data-integrity-core IEDVQuery interface.
+ */
 const edvDocumentQuery = {
   title: 'EDV Document Query',
   type: 'object',
@@ -259,6 +290,10 @@ const edvDocumentQuery = {
   }
 };
 
+/**
+ * No @interop/data-integrity-core equivalent; server-side query for listing EDV
+ * configs by controller + referenceId.
+ */
 const getEdvsQuery = {
   title: 'edv query',
   type: 'object',
@@ -270,6 +305,11 @@ const getEdvsQuery = {
   }
 };
 
+/**
+ * Corresponds to @interop/data-integrity-core IDelegatedZcap interface (the
+ * `proof` object corresponds to ICapabilityDelegationProof). Assumes
+ * Ed25519Signature2020 proofs, so `proof.cryptosuite` is intentionally absent.
+ */
 const delegatedZcap = {
   title: 'delegatedZcap',
   type: 'object',
@@ -356,6 +396,8 @@ const delegatedZcap = {
   }
 };
 
+// Revocation POST body: same shape as `delegatedZcap`
+// (@interop/data-integrity-core IDelegatedZcap).
 const postRevocationBody = {...delegatedZcap};
 
 export {

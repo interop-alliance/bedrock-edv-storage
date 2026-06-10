@@ -1,5 +1,17 @@
 # bedrock-edv-storage ChangeLog
 
+### Changed
+- Document how the EDV schemas correspond to the `@interop/data-integrity-core`
+  interfaces (`IEDVConfig`, `IJWE`, `IEDVDocumentStream`). Comment-only; no
+  change to validation behavior. In particular, clarify that document
+  `stream.pending` is intentionally not accepted by the server -- the client
+  strips it from the cleartext envelope before sending, so it never reaches
+  storage.
+- Annotate `lib/` JSDoc params with the corresponding
+  `@interop/data-integrity-core` types (`IEDVConfig`, `IEncryptedDocument`,
+  `IEDVChunk`, `IEDVQuery`) and add JSDoc to previously undocumented helpers.
+  Comment-only; no change to runtime behavior.
+
 ## 21.4.2 - 2026-06-15
 
 ### Fixed
